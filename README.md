@@ -12,5 +12,4 @@ docs
 How to run
 notation
 
-## Elastic High performance Recommendation server
 ## Cloud native recommendation system
