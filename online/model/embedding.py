@@ -1,5 +1,5 @@
+from sklearn.metrics.pairwise import cosine_similarity
 from typing import List, Optional
-import math
 
 
 class Embedding(object):
@@ -26,15 +26,4 @@ class Embedding(object):
                 other is None or other.emb_vector is None or \
                 len(self._emb_vector) != len(other.emb_vector):
             return -1
-        dot_product = 0
-        denom1 = 0
-        denom2 = 0
-        for i in range(len(self._emb_vector)):
-            val1 = self._emb_vector[i]
-            val2 = other.emb_vector[i]
-            dot_product += val1 * val2
-            denom1 += val1 * val1
-            denom2 += val2 * val2
-        if denom1 == 0 or denom2 == 0:
-            return 0
-        return dot_product / math.sqrt(denom1 * denom2)
+        return cosine_similarity(self.emb_vector, other.emb_vector)
