@@ -1,5 +1,4 @@
 # Elastic-and-Parallel-Rec-System-pipeline
-/elastic-server
 /recommendation-system
 /docs
 README.md
