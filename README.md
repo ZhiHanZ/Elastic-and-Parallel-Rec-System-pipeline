@@ -19,4 +19,5 @@ notation
 
 ### feature
 1. high performance server: async io and auto scaling
+
 2. distributed training using machine learning server cluster
