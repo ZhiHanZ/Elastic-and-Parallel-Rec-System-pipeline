@@ -21,4 +21,5 @@ notation
 1. high performance server: async io and auto scaling
 
 2. distributed training using machine learning server cluster
-![Image of Yaktocat](https://github.com/ZhiHanZ/Elastic-and-Parallel-Rec-System-pipeline/blob/main/resources/webroot/fg14.png)
+
+![Parameter Server](https://github.com/ZhiHanZ/Elastic-and-Parallel-Rec-System-pipeline/blob/main/resources/webroot/fg14.png)
