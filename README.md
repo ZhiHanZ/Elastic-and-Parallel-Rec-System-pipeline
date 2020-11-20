@@ -2,6 +2,9 @@
 Elastic recommendation system is serving for the course project for CSCI 596.
 The main purpose is to use parallel computing ideas in the course to improve the performance of original monolithic client server recommendation system
 ## Cloud native recommendation system
+Challenges: 
+1. server is the bottleneck for client inqueries
+2. Model training convergence speed restricted by single machine nature
 ### framework
 1. Data Ingestion: spark and flink for real-time processing data pipeline
 2. Model server: Flink
