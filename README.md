@@ -1,16 +1,6 @@
 # Elastic-and-Parallel-Rec-System-pipeline
-/recommendation-system
-/docs
-README.md
-
-in every single project should **cover**:
-
-unit tests
-continugous integration
-docs
-How to run
-notation
-
+Elastic recommendation system is serving for the course project for CSCI 596.
+The main purpose is to use parallel computing ideas in the course to improve the performance of original monolithic client server recommendation system
 ## Cloud native recommendation system
 ### framework
 1. Data Ingestion: spark and flink for real-time processing data pipeline
