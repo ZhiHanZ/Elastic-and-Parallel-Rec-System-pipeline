@@ -19,6 +19,8 @@ notation
 
 ### feature
 1. high performance server: async io and auto scaling
+![Parameter Server](https://github.com/ZhiHanZ/Elastic-and-Parallel-Rec-System-pipeline/blob/main/resources/webroot/fg11.png)
+
 
 2. distributed training using machine learning server cluster
 
