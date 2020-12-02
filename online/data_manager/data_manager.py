@@ -1,11 +1,11 @@
 from collections import defaultdict
 from typing import Dict, List, Set, Optional
-from .movie import Movie
-from .user import User
-from .rating import Rating
-from .redis_client import RedisClient
-from ..util.config import Config
-from ..util.utility import Utility
+from data_manager.movie import Movie
+from data_manager.user import User
+from data_manager.rating import Rating
+from data_manager.redis_client import RedisClient
+from util.config import Config
+from util.utility import Utility
 import threading
 
 
@@ -188,7 +188,7 @@ class DataManager(object):
         if genre is not None:
             movies = self.genre_reverse_index_map[genre].copy()
             if sort_by == "rating":
-                movies.sort(key=lambda m: m.avg_rating)
+                movies.sort(key=lambda m: m.avg_rating, reverse=True)
             elif sort_by == "release_year":
                 movies.sort(key=lambda m: m.release_year)
             return movies[:size]

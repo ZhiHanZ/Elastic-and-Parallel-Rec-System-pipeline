@@ -1,6 +1,6 @@
 from typing import List, Tuple, Optional
-from .rating import Rating
-from ..model.embedding import Embedding
+from data_manager.rating import Rating
+from model.embedding import Embedding
 import heapq
 
 
@@ -12,6 +12,7 @@ class Movie(object):
         self._imdb_id = ''
         self._tmdb_id = ''
         self._genres = []  # type: List[str]
+        self._rating_number = 0
         self._avg_rating = 0.0
 
         # embedding of the movie
@@ -26,6 +27,15 @@ class Movie(object):
 
         # @JsonSerialize(using = RatingListSerializer.class)
         self._top_ratings = []  # type: List[Tuple[float, Rating]]
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        del state["_emb"]
+        del state["_ratings"]
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
 
     @property
     def movie_id(self):
@@ -67,7 +77,8 @@ class Movie(object):
         return self._ratings
 
     def add_rating(self, rating: Rating):
-        self._avg_rating = (self._avg_rating * self.n_ratings + rating.score) / (self.n_ratings + 1)
+        self._avg_rating = (self._avg_rating * self.rating_number + rating.score) / (self.rating_number + 1)
+        self._rating_number += 1
         self._ratings.append(rating)
         self.add_top_rating(rating)
 
@@ -93,8 +104,8 @@ class Movie(object):
         self._tmdb_id = tmdb_id
 
     @property
-    def n_ratings(self):
-        return len(self._ratings)
+    def rating_number(self):
+        return self._rating_number
 
     @property
     def avg_rating(self):

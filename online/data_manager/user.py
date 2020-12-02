@@ -1,6 +1,6 @@
 from typing import List, Optional
-from .rating import Rating
-from ..model.embedding import Embedding
+from data_manager.rating import Rating
+from model.embedding import Embedding
 
 
 class User(object):
@@ -9,6 +9,7 @@ class User(object):
         self._avg_rating = 0.0
         self._highest_rating = 0.0
         self._lowest_rating = 5.0
+        self._rating_count = 0
 
         # @JsonSerialize(using = RatingListSerializer.class)
         self._ratings = []  # type: List[Rating]
@@ -36,6 +37,7 @@ class User(object):
     def add_rating(self, rating: Rating):
         self._avg_rating = (self._avg_rating * self.n_ratings + rating.score) / (self.n_ratings + 1)
         self._ratings.append(rating)
+        self._rating_count += 1
         if rating.score > self._highest_rating:
             self._highest_rating = rating.score
         if rating.score < self._lowest_rating:

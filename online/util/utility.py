@@ -1,4 +1,4 @@
-from ..model.embedding import Embedding
+from model.embedding import Embedding
 
 
 class Utility(object):

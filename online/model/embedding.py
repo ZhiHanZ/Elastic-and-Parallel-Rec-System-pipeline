@@ -26,4 +26,4 @@ class Embedding(object):
                 other is None or other.emb_vector is None or \
                 len(self._emb_vector) != len(other.emb_vector):
             return -1
-        return cosine_similarity(self.emb_vector, other.emb_vector)
+        return cosine_similarity([self.emb_vector], [other.emb_vector])[0]
