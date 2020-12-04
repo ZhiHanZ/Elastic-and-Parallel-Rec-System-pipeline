@@ -1,15 +1,20 @@
 # Elastic-and-Parallel-Rec-System-pipeline
-/elastic-server
-/recommendation-system
-/docs
-README.md
-
-in every single project should **cover**:
-
-unit tests
-continugous integration
-docs
-How to run
-notation
-
+Elastic recommendation system is serving for the course project for CSCI 596.
+The main purpose is to use parallel computing ideas in the course to improve the performance of original monolithic client server recommendation system
 ## Cloud native recommendation system
+Challenges: 
+1. server is the bottleneck for client inqueries
+2. Model training convergence speed restricted by single machine nature
+### framework
+1. Data Ingestion: spark and flink for real-time processing data pipeline
+2. Model server: Flink
+3. Model training system: pytorch
+
+### feature
+1. high performance server: async io and auto scaling
+![Parameter Server](https://github.com/ZhiHanZ/Elastic-and-Parallel-Rec-System-pipeline/blob/main/resources/webroot/fg11.png)
+
+
+2. distributed training using machine learning server cluster
+
+![Parameter Server](https://github.com/ZhiHanZ/Elastic-and-Parallel-Rec-System-pipeline/blob/main/resources/webroot/fg14.png)

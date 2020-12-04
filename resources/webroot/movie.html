@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html class="no-js" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <!--<base href="/">-->
+    <base href="."/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>Movie | SeeStar RecSys</title>
+    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="theme-color" content="#ffffff"/>
+    <link type="text/plain" rel="author"/>
+    <link href="./css/style.css" rel="stylesheet"/>
+    <link rel="shortcut icon" href="./resources/favicon.ico">
+    <script src="./js/jquery-3.2.1.min.js"></script>
+    <script src="./js/recsys.js?v=1.25"></script>
+    <!-- Load React. -->
+    <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
+    <script src="./js/react.development.js"></script>
+    <script src="./js/react-dom.development.js"></script>
+    <script src="./js/babel.min.js"></script>
+    <style>
+        .movie-row .movie-row-bounds .movie-row-item{
+            display: block;
+        }
+        .movie-card-md1{
+            margin:0 5px 15px 0
+        }
+    </style>
+</head>
+<body id="root">
+<div>
+    <header class="base-compact-header">
+        <div class="ml4-container base-header-primary-container">
+            <div class="base-header-logo-container">
+                <span class="base-header-logo-main">
+                    <a href="."><img alt="SeeStar RecSys Logo" height="30px" src="./images/seestarrecsyslogo.png"/></a>
+                </span>
+            </div>
+            <div class="base-header-search-container">
+                <form class="form-inline ng-pristine ng-valid ng-touched" novalidate="" role="form">
+                    <div class="input-group input-group-sm base-header-search-box">
+                        <span class="twitter-typeahead" style="position: relative; display: inline-block;">
+                            <input class="form-control input-sm no-glow tt-input ng-pristine ng-valid ng-touched"
+                                   id="omnisearch-typeahead" name="currentVal" type="text" spellcheck="false" dir="auto"
+                                   aria-owns="omnisearch-typeahead_listbox" role="combobox"
+                                   aria-readonly="true" aria-autocomplete="list"
+                                   style="position: relative; vertical-align: top; background-color: transparent;"/>
+                        </span>
+                        <span class="input-group-btn">
+                            <button class="btn btn-default btn-sm no-glow">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </header>
+    <div class="base-compact-header-spacer"></div>
+    <div class="ml4-container" style="min-height: 920px;">
+        <div id="main-container">
+            <div class="movie-alt" id="movie-details-container">
+            </div>
+            <div class="frontpage" id="recPage">
+                <div id="frontpage-related-movies-container"></div>
+                <div class="frontpage-section-top">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h1>give feedback</h1>
+                            <div class="jumbotron ml4-jumbotron" style="padding-top: 0;">
+                                <p> To collect your feedback, please create issue on our project github homepage
+                                    <a href="https://github.com/ZhiHanZ/Elastic-and-Parallel-Rec-System-pipeline/issues"
+                                       target="_blank">Elastic and Parallel RecSystem Github</a>.
+                                </p>
+                                <p>
+                                    <button class="btn btn-primary btn-lg"
+                                            onclick="location.href='https://github.com/ZhiHanZ/Elastic-and-Parallel-Rec-System-pipeline/issues';">
+                                        give feedback
+                                    </button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script type="text/babel">
+    const windowLocation = window.location;
+    const movieId = getQueryString("movieId",windowLocation);
+    const baseUrl = windowLocation.protocol + "//" + windowLocation.host + "/";
+    // const baseUrl = "http://localhost:6010/";  // for debug
+
+    function GenreList(props) {
+        const genres = props.genres;
+        return genres.map((genre, index) => (
+            <span key={genre}>
+                <a href={baseUrl + "collection.html?type=genre&value=" + genre}><b>{genre}</b></a>
+                {index < genres.length-1? ", ":""}
+            </span>
+        ));
+    }
+
+    function RatingUserList(props) {
+        const ratings = props.ratings;
+        return ratings.map((rating, index) => (
+            <span key={rating.rating.userId}>
+                <a href={baseUrl + "user.html?id=" + rating.rating.userId}><b>User{rating.rating.userId}</b></a>
+                {index < ratings.length-1? ", ":""}
+            </span>
+        ));
+    }
+
+    class MovieDetail extends React.Component {
+        constructor(props) {
+            super(props);
+            this.ajax = (props.ajax !== undefined && props.ajax);
+            this.state = {};
+        }
+
+        componentDidMount() {
+            if(this.ajax) {
+                const movieId = this.props.movieId;
+                const reqUrl = baseUrl + "getmovie?id=" + movieId;
+                this.serverRequest = $.get(reqUrl, function (result) {
+                    this.setState({movie: result,});
+                }.bind(this));
+            }
+        }
+
+        componentWillUnmount() {
+            if(this.ajax) {
+                this.serverRequest.abort();
+            }
+        }
+
+        render() {
+            if(this.ajax && this.state.movie === undefined){
+                return null;
+            }
+            const movieObject = this.ajax? this.state.movie: this.props.movie;
+
+            return (
+                <div className="row movie-details-header movie-details-block">
+                    <div className="col-md-2 header-backdrop">
+                        <img alt="movie backdrop image" height="250" src={"./posters/" + movieObject.movieId + ".jpg"}/>
+                    </div>
+                    <div className="col-md-9">
+                        <h1 className="movie-title"> {movieObject.title} </h1>
+                        <div className="row movie-highlights">
+                            <div className="col-md-2">
+                                <div className="heading-and-data">
+                                    <div className="movie-details-heading">Release Year</div>
+                                    <div> {movieObject.releaseYear} </div>
+                                </div>
+                                <div className="heading-and-data">
+                                    <div className="movie-details-heading">Links</div>
+                                    <a target="_blank" href={"http://www.imdb.com/title/tt" + movieObject.imdbId}>imdb</a>,
+                                    <span>
+                                        <a target="_blank" href={"http://www.themoviedb.org/movie/" + movieObject.tmdbId}> tmdb</a>
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="col-md-3">
+                                <div className="heading-and-data">
+                                    <div className="movie-details-heading"> MovieLens predicts for you</div>
+                                    <div> 5.0 stars</div>
+                                </div>
+                                <div className="heading-and-data">
+                                    <div className="movie-details-heading"> Average of {movieObject.ratingNumber} ratings</div>
+                                    <div> {movieObject.averageRating.toPrecision(2)} stars
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-md-6">
+                                <div className="heading-and-data">
+                                    <div className="movie-details-heading">Genres</div>
+                                    <GenreList genres={movieObject.genres}/>
+                                </div>
+                                <div className="heading-and-data">
+                                    <div className="movie-details-heading">Who likes the movie most</div>
+                                    <RatingUserList ratings={movieObject.topRatings}/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+    }
+
+    function GenreListItem(props) {
+    const genre = props.genre;
+    return (
+        <div className="genre">
+            <a href={baseUrl + 'collection.html?type=genre&value=' + genre}>
+                <b>{genre}</b>
+            </a>
+        </div>
+    );
+}
+
+    function GenreList(props) {
+        const genres = props.genres;
+        return (
+            <div className="genre-list">
+                {genres.map((genre) => <GenreListItem genre={genre} key={genre} />)}
+            </div>
+        );
+    }
+
+    function MovieItem(props) {
+        const movie = props.movie;
+        const movieName = movie.title;
+        const movieId = movie.movieId;
+        const year = movie.releaseYear;
+        const rating = movie.averageRating.toPrecision(2);
+        const rateNumber = movie.ratingNumber;
+        const genres = movie.genres;
+        return (
+            <div className="movie-row-item" style={{marginRight:"5px"}}>
+                <movie-card-smart>
+                    <movie-card-md1>
+                        <div className="movie-card-md1">
+                            <div className="card">
+                                <link-or-emit>
+                                    <a uisref="base.movie" href={'./movie.html?movieId=' + movieId}>
+                                        <span>
+                                            <div className="poster">
+                                                <img src={'./posters/' + movieId + '.jpg'} alt={movieName} />
+                                            </div>
+                                        </span>
+                                    </a>
+                                </link-or-emit>
+                                <div className="overlay">
+                                    <div className="above-fold">
+                                        <link-or-emit>
+                                            <a uisref="base.movie" href={'./movie.html?movieId=' + movieId}>
+                                                <span><p className="title">{movieName}</p></span>
+                                            </a>
+                                        </link-or-emit>
+                                        <div className="rating-indicator">
+                                            <ml4-rating-or-prediction>
+                                                <div className="rating-or-prediction predicted">
+                                                    <span className="rating-star-icon">★</span>
+                                                    <div className="rating-value">
+                                                        {rating}
+                                                    </div>
+                                                </div>
+                                            </ml4-rating-or-prediction>
+                                        </div>
+                                        <p className="year">{year}</p>
+                                    </div>
+                                    <div className="below-fold">
+                                        <GenreList genres={genres} />
+                                        <div className="ratings-display">
+                                            <div className="rating-average">
+                                                <span className="rating-large">{rating}</span>
+                                                <span className="rating-total">/5</span>
+                                                <p className="rating-caption"> {rateNumber} ratings </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </movie-card-md1>
+                </movie-card-smart>
+            </div>
+        );
+    }
+
+    class RelatedMovieList extends React.Component {
+        constructor(props) {
+            super(props);
+            this.ajax = (props.ajax !== undefined && props.ajax);
+            this.state = {movies: []};
+        }
+
+        componentDidMount() {
+            if (this.ajax) {
+                const movieId = this.props.movieId;
+                const reqUrl = baseUrl + "getsimilarmovie?movieId=" + movieId + "&size=16&model=emb";
+                this.serverRequest = $.get(reqUrl, function (result) {
+                    this.setState({movies: result,});
+                }.bind(this));
+            }
+        }
+
+        componentWillUnmount() {
+            if (this.ajax) {
+                this.serverRequest.abort();
+            }
+        }
+
+        render() {
+            const movies = this.ajax? this.state.movies: this.props.movies;
+            const containerId = this.props.containerId;
+            return (
+                <div className="frontpage-section-top"> 
+                    <div className="explore-header frontpage-section-header">
+                        Related Movies 
+                    </div>
+                    <div className="movie-row">
+                        <div className="movie-row-bounds">
+                            <div className="movie-row-scrollable" id={containerId} style={{marginLeft: "0px"}}>
+                                {movies.map((movie) => <MovieItem movie={movie} key={movie.movieId} />)}
+                            </div>
+                        </div>
+                        <div className="clearfix"/>
+                    </div>
+                </div>
+            );
+        }
+    }
+
+    ReactDOM.render(
+      <MovieDetail ajax={true} movieId={movieId}/>,
+      document.getElementById("movie-details-container")
+    );
+
+    ReactDOM.render(
+      <RelatedMovieList ajax={true} movieId={movieId} containerId="relatedMovies"/>,
+      document.getElementById("frontpage-related-movies-container")
+    );
+
+</script>
+</html>
