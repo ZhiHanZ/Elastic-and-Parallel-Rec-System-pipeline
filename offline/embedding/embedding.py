@@ -22,6 +22,12 @@ class Embedding:
         self.redisPort = 6379
 
     def process_item_sequence(self, spark_session: SparkSession, raw_sample_data_path: str):
+        """
+        process item sequence, integrate movieId into movieStr
+        :param spark_session:
+        :param raw_sample_data_path:
+        :return:
+        """
         root_dir = dirname(dirname(dirname(abspath(__file__))))
         rating_resource_path = join(root_dir, "resources", raw_sample_data_path)
 
@@ -78,6 +84,16 @@ class Embedding:
 
     def train_item_to_vec(self, spark_session: SparkSession, samples, emb_length: int, emb_output_file_name: str,
                       save_to_redis: bool, redis_key_prefix: str):
+        """
+        train a word2vec model based on movie samples
+        :param spark_session:
+        :param samples:
+        :param emb_length:
+        :param emb_output_file_name:
+        :param save_to_redis:
+        :param redis_key_prefix:
+        :return:
+        """
         word2vec = Word2Vec().setVectorSize(emb_length).setWindowSize(5).setNumIterations(10)
         model = word2vec.fit(samples)
         synonyms = model.findSynonyms("158", 20)
@@ -185,6 +201,17 @@ class Embedding:
 
     def generate_user_emb(self, spark_session: SparkSession, raw_sample_data_path: str, word2vec_model: Word2VecModel,
                           emb_length: int, emb_output_file_name: str, save_to_redis: bool, redis_key_prefix: str):
+        """
+        generate user embedding which is constructed by related movie embeddings
+        :param spark_session:
+        :param raw_sample_data_path:
+        :param word2vec_model:
+        :param emb_length:
+        :param emb_output_file_name:
+        :param save_to_redis:
+        :param redis_key_prefix:
+        :return:
+        """
         root_dir = dirname(dirname(dirname(abspath(__file__))))
         rating_resource_path = join(root_dir, "resources", raw_sample_data_path)
 
@@ -238,4 +265,4 @@ if __name__ == "__main__":
 
     model = embedding.train_item_to_vec(spark, samples, emb_length, "item2vecEmb.csv", False, "i2vEmb")
     # embedding.graph_emb(samples, spark, emb_length, "itemGraphEmb.csv", True, "graphEmb")
-    # embedding.generate_user_emb(spark, raw_sample_data_path, model, emb_length, "userEmb.csv", False, "uEmb")
+    embedding.generate_user_emb(spark, raw_sample_data_path, model, emb_length, "userEmb.csv", False, "uEmb")

@@ -10,15 +10,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="theme-color" content="#ffffff"/>
     <link type="text/plain" rel="author"/>
-    <link href="./css/style.css" rel="stylesheet"/>
+    <link href="css/style.css" rel="stylesheet"/>
     <link rel="shortcut icon" href="./resources/favicon.ico">
-    <script src="./js/jquery-3.2.1.min.js"></script>
-    <script src="./js/recsys.js?v=1.31"></script>
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/recsys.js?v=1.31"></script>
     <!-- Load React. -->
     <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
-    <script src="./js/react.development.js"></script>
-    <script src="./js/react-dom.development.js"></script>
-    <script src="./js/babel.min.js"></script>
+    <script src="js/react.development.js"></script>
+    <script src="js/react-dom.development.js"></script>
+    <script src="js/babel.min.js"></script>
     <style>
         .movie-row .movie-row-bounds .movie-row-item{
             display: block;
@@ -34,7 +34,7 @@
         <div class="ml4-container base-header-primary-container">
             <div class="base-header-logo-container">
                 <span class="base-header-logo-main">
-                    <a href="."><img alt="SeeStar RecSys Logo" height="30px" src="./images/seestarrecsyslogo.png"/></a>
+                    <a href="index.html"><img alt="SeeStar RecSys Logo" height="30px" src="images/seestarrecsyslogo.png"/></a>
                 </span>
             </div>
             <div class="base-header-search-container">
@@ -106,7 +106,7 @@ class UserDetail extends React.Component {
     componentDidMount() {
         const reqUrl = baseUrl + "getuser?id=" + this.props.userId;
         this.serverRequest = $.get(reqUrl, function (result) {
-            this.setState({userObject: result,})
+            this.setState({userObject: JSON.parse(result),})
         }.bind(this));
     }
 
@@ -135,7 +135,7 @@ class UserDetail extends React.Component {
                             </div>
                             <div className="heading-and-data">
                                 <div className="movie-details-heading"> Average Rating Score</div>
-                                <div> {userObject.averageRating.toPrecision(2)} stars</div>
+                                <div> {userObject.avgRating.toPrecision(2)} stars</div>
                             </div>
                         </div>
                         <div className="col-md-3">
@@ -193,7 +193,7 @@ class MovieItem extends React.Component {
             const rating = this.props.rating;
             const reqUrl = baseUrl + "getmovie?id=" + rating.movieId;
             this.serverRequest = $.get(reqUrl, function (result) {
-                this.setState({movie: result,});
+                this.setState({movie: JSON.parse(result),});
             }.bind(this));
         }
     }
@@ -212,7 +212,7 @@ class MovieItem extends React.Component {
         const movieName = movie.title;
         const movieId = movie.movieId;
         const year = movie.releaseYear;
-        const rating = movie.averageRating.toPrecision(2);
+        const rating = movie.avgRating.toPrecision(2);
         const rateNumber = movie.ratingNumber;
         const genres = movie.genres;
         return (
@@ -278,7 +278,7 @@ class UserHistorySection extends React.Component {
     componentDidMount() {
         const reqUrl = baseUrl + "getuser?id=" + this.props.userId;
         this.serverRequest = $.get(reqUrl, function (result) {
-            this.setState({ratings: result.ratings,});
+            this.setState({ratings: JSON.parse(result).ratings,});
         }.bind(this));
     }
 
@@ -297,7 +297,7 @@ class UserHistorySection extends React.Component {
                     <div className="movie-row-bounds">
                         <div className="movie-row-scrollable" id={containerId} style={{marginLeft: "0px"}}>
                             {this.state.ratings.map((rating) =>
-                                <MovieItem rating={rating.rating} key={rating.rating.movieId} ajax={true}/>)}
+                                <MovieItem rating={rating} key={rating.movieId} ajax={true}/>)}
                         </div>
                     </div>
                     <div className="clearfix"/>
@@ -317,7 +317,7 @@ class MovieRecSection extends React.Component {
         const userId = this.props.userId;
         const reqUrl = baseUrl + "getrecforyou?id=" + userId + "&size=32&model=emb";
         this.serverRequest = $.get(reqUrl, function (result) {
-            this.setState({movies: result});
+            this.setState({movies: JSON.parse(result)});
         }.bind(this));
     }
 

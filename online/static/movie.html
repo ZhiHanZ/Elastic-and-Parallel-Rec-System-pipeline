@@ -10,15 +10,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="theme-color" content="#ffffff"/>
     <link type="text/plain" rel="author"/>
-    <link href="./css/style.css" rel="stylesheet"/>
+    <link href="css/style.css" rel="stylesheet"/>
     <link rel="shortcut icon" href="./resources/favicon.ico">
-    <script src="./js/jquery-3.2.1.min.js"></script>
-    <script src="./js/recsys.js?v=1.25"></script>
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/recsys.js?v=1.25"></script>
     <!-- Load React. -->
     <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
-    <script src="./js/react.development.js"></script>
-    <script src="./js/react-dom.development.js"></script>
-    <script src="./js/babel.min.js"></script>
+    <script src="js/react.development.js"></script>
+    <script src="js/react-dom.development.js"></script>
+    <script src="js/babel.min.js"></script>
     <style>
         .movie-row .movie-row-bounds .movie-row-item{
             display: block;
@@ -34,7 +34,7 @@
         <div class="ml4-container base-header-primary-container">
             <div class="base-header-logo-container">
                 <span class="base-header-logo-main">
-                    <a href="."><img alt="SeeStar RecSys Logo" height="30px" src="./images/seestarrecsyslogo.png"/></a>
+                    <a href="index.html"><img alt="SeeStar RecSys Logo" height="30px" src="images/seestarrecsyslogo.png"/></a>
                 </span>
             </div>
             <div class="base-header-search-container">
@@ -108,8 +108,8 @@
     function RatingUserList(props) {
         const ratings = props.ratings;
         return ratings.map((rating, index) => (
-            <span key={rating.rating.userId}>
-                <a href={baseUrl + "user.html?id=" + rating.rating.userId}><b>User{rating.rating.userId}</b></a>
+            <span key={rating[1].userId}>
+                <a href={baseUrl + "user.html?id=" + rating[1].userId}><b>User{rating[1].userId}</b></a>
                 {index < ratings.length-1? ", ":""}
             </span>
         ));
@@ -127,7 +127,7 @@
                 const movieId = this.props.movieId;
                 const reqUrl = baseUrl + "getmovie?id=" + movieId;
                 this.serverRequest = $.get(reqUrl, function (result) {
-                    this.setState({movie: result,});
+                    this.setState({movie: JSON.parse(result),});
                 }.bind(this));
             }
         }
@@ -143,7 +143,6 @@
                 return null;
             }
             const movieObject = this.ajax? this.state.movie: this.props.movie;
-
             return (
                 <div className="row movie-details-header movie-details-block">
                     <div className="col-md-2 header-backdrop">
@@ -172,7 +171,7 @@
                                 </div>
                                 <div className="heading-and-data">
                                     <div className="movie-details-heading"> Average of {movieObject.ratingNumber} ratings</div>
-                                    <div> {movieObject.averageRating.toPrecision(2)} stars
+                                    <div> {movieObject.avgRating.toPrecision(2)} stars
                                     </div>
                                 </div>
                             </div>
@@ -218,7 +217,7 @@
         const movieName = movie.title;
         const movieId = movie.movieId;
         const year = movie.releaseYear;
-        const rating = movie.averageRating.toPrecision(2);
+        const rating = movie.avgRating.toPrecision(2);
         const rateNumber = movie.ratingNumber;
         const genres = movie.genres;
         return (
@@ -286,7 +285,7 @@
                 const movieId = this.props.movieId;
                 const reqUrl = baseUrl + "getsimilarmovie?movieId=" + movieId + "&size=16&model=emb";
                 this.serverRequest = $.get(reqUrl, function (result) {
-                    this.setState({movies: result,});
+                    this.setState({movies: JSON.parse(result),});
                 }.bind(this));
             }
         }

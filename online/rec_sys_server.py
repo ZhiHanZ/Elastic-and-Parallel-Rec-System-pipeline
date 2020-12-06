@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, render_template
+from flask import Flask, request
 from service.user_service import *
 from service.movie_service import *
 from service.recommendation_service import *
@@ -37,7 +37,7 @@ def get_user():
 
 @app.route("/getsimilarmovie", methods=["GET"])
 def get_similar_movie():
-    id = request.args.get("movie_id")
+    id = request.args.get("movieId")
     size = request.args.get("size")
     model = request.args.get("model")
     return SimilarMovieService.do_get(int(id), int(size), model)
