@@ -18,8 +18,9 @@ def candidate_generator(movie):
     for genre in movie.genres:
         one_candidates = DataManager.get_instance().get_movies_by_genre(genre, 100, "rating")
         for candidate in one_candidates:
-            candidate_dict[candidate.movie_id] = candidate
-    del candidate_dict[movie.movie_id]
+            candidate_dict[candidate.movieId] = candidate
+    if movie.movieId in candidate_dict:
+        del candidate_dict[movie.movieId]
     return candidate_dict.values()
 
 
@@ -51,6 +52,6 @@ def calculate_similar_score(movie, candidate):
 
 
 def calculate_emb_similar_score(movie, candidate):
-    if movie is None or candidate is None:
+    if movie is None or candidate is None or movie.get_emb() is None:
         return -1
-    return movie.emb.calculate_similarity(candidate.emb)
+    return movie.get_emb().calculate_similarity(candidate.get_emb())

@@ -55,20 +55,24 @@ class DataManager(object):
                     id_str = movie_data[0]
                     title_str = movie_data[1].strip()
                     genres_str = movie_data[2].strip()
-                    movie = Movie()
-                    movie.movie_id = int(id_str)
-                    release_year = self._parse_release_year(title_str)
-                    if release_year == -1:
-                        movie.title = movie_data[1].strip()
-                    else:
-                        movie.release_year = release_year
-                        movie.title = title_str[:-6].strip()
-                    if len(genres_str) > 0:
-                        genres = genres_str.split("|")
-                        for genre in genres:
-                            movie.add_genre(genre)
-                            self._add_movie_to_genre_index(genre, movie)
-                    self.movie_map[movie.movie_id] = movie
+                else:
+                    id_str = movie_data[0]
+                    title_str = ",".join(movie_data[1:-1]).strip()
+                    genres_str = movie_data[-1].strip()
+                movie = Movie()
+                movie.movieId = int(id_str)
+                release_year = self._parse_release_year(title_str)
+                if release_year == -1:
+                    movie.title = movie_data[1].strip()
+                else:
+                    movie.releaseYear = release_year
+                    movie.title = title_str[:-6].strip()
+                if len(genres_str) > 0:
+                    genres = genres_str.split("|")
+                    for genre in genres:
+                        movie.add_genre(genre)
+                        self._add_movie_to_genre_index(genre, movie)
+                self.movie_map[movie.movieId] = movie
         print("Loading movie data completed. %d movies in total." % len(self.movie_map))
 
     # load movie embedding
@@ -145,8 +149,8 @@ class DataManager(object):
                     movie = self.get_movie_by_id(movie_id)
                     if movie is not None:
                         count += 1
-                        movie.imdb_id = link_data[1].strip()
-                        movie.tmdb_id = link_data[2].strip()
+                        movie.imdbId = link_data[1].strip()
+                        movie.tmdbId = link_data[2].strip()
         print("Loading link data completed. %d links in total." % count)
         
     # load ratings data from ratings.csv
@@ -164,18 +168,18 @@ class DataManager(object):
                 if len(rating_data) == 4:
                     count += 1
                     rating = Rating()
-                    rating.user_id = int(rating_data[0])
-                    rating.movie_id = int(rating_data[1])
+                    rating.userId = int(rating_data[0])
+                    rating.movieId = int(rating_data[1])
                     rating.score = float(rating_data[2])
                     rating.timestamp = int(rating_data[3])
-                    movie = self.get_movie_by_id(rating.movie_id)
+                    movie = self.get_movie_by_id(rating.movieId)
                     if movie is not None:
                         movie.add_rating(rating)
-                    if rating.user_id not in self.user_map:
+                    if rating.userId not in self.user_map:
                         user = User()
-                        user.user_id = rating.user_id
-                        self.user_map[user.user_id] = user
-                    self.user_map[rating.user_id].add_rating(rating)
+                        user.userId = rating.userId
+                        self.user_map[user.userId] = user
+                    self.user_map[rating.userId].add_rating(rating)
 
         print("Loading rating data completed. %d ratings in total." % count)
 
@@ -188,9 +192,9 @@ class DataManager(object):
         if genre is not None:
             movies = self.genre_reverse_index_map[genre].copy()
             if sort_by == "rating":
-                movies.sort(key=lambda m: m.avg_rating, reverse=True)
+                movies.sort(key=lambda m: m.avgRating, reverse=True)
             elif sort_by == "release_year":
-                movies.sort(key=lambda m: m.release_year)
+                movies.sort(key=lambda m: m.releaseYear)
             return movies[:size]
         return []
 
@@ -198,9 +202,9 @@ class DataManager(object):
     def get_movies(self, size: int, sort_by: str) -> List[Movie]:
         movies = list(self.movie_map.values())
         if sort_by == "rating":
-            movies.sort(key=lambda m: m.avg_rating)
+            movies.sort(key=lambda m: m.avgRating)
         elif sort_by == "release_year":
-            movies.sort(key=lambda m: m.release_year)
+            movies.sort(key=lambda m: m.releaseYear)
         return movies[:size]
 
     # get movie object by movie id
