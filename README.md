@@ -90,3 +90,7 @@ Cheng-Tsung Liu
 2. Implement the front-end, find resources and make the logo.
 3. Write documentation for the front-end part.
 
+Zhihan Zhang
+1. Project guidence (selected this project as final project)
+2. Choose appropriate framework and programming language(python, js) for project delivery
+3. Specified architecture and infrastructure design made parallelization idea & machine learning algroithm down to the earth
